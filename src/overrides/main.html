@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+  Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to
@@ -28,14 +28,21 @@
   <!-- Extra style sheets (can't be set in mkdocs.yml due to content hash) -->
   <link
     rel="stylesheet"
-    href="{{ 'overrides/assets/stylesheets/main.css' | url }}"
+    href="{{ 'assets/stylesheets/custom.css' | url }}"
   />
 {% endblock %}
 
 <!-- Announcement bar -->
 {% block announce %}
-  <a href="https://twitter.com/squidfunk">
-    For updates follow <strong>@squidfunk</strong> on
+  For updates follow <strong>@squidfunk</strong> on
+  <a rel="me" href="https://fosstodon.org/@squidfunk">
+    <span class="twemoji mastodon">
+      {% include ".icons/fontawesome/brands/mastodon.svg" %}
+    </span>
+    <strong>Fosstodon</strong>
+  </a>
+  and
+  <a href="https://x.com/squidfunk">
     <span class="twemoji twitter">
       {% include ".icons/fontawesome/brands/twitter.svg" %}
     </span>
@@ -48,6 +55,5 @@
   {{ super() }}
 
   <!-- Extra JavaScript (can't be set in mkdocs.yml due to content hash) -->
-  <script src="{{ 'overrides/assets/javascripts/bundle.js' | url }}"></script>
+  <script src="{{ 'assets/javascripts/custom.js' | url }}"></script>
 {% endblock %}
-

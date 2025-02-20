@@ -1,5 +1,4 @@
 ---
-template: overrides/main.html
 title: Extensions
 ---
 
@@ -16,7 +15,7 @@ syntax extensions for technical writing.
 
 ## Supported extensions
 
-The following extensions are all supported by Material for MkDocs and therefore 
+The following extensions are all supported by Material for MkDocs and therefore
 strongly recommended. Click on each extension to learn about its purpose and
 configuration:
 
@@ -35,7 +34,6 @@ configuration:
 - [Footnotes]
 - [Highlight]
 - [Keys]
-- [Metadata]
 - [Markdown in HTML]
 - [SmartSymbols]
 - [Snippets]
@@ -60,7 +58,6 @@ configuration:
   [Footnotes]: python-markdown.md#footnotes
   [Highlight]: python-markdown-extensions.md#highlight
   [Keys]: python-markdown-extensions.md#keys
-  [Metadata]: python-markdown.md#metadata
   [Markdown in HTML]: python-markdown.md#markdown-in-html
   [SmartSymbols]: python-markdown-extensions.md#smartsymbols
   [Snippets]: python-markdown-extensions.md#snippets
@@ -80,15 +77,14 @@ your documentation project.
 
 ### Minimal configuration
 
-This configuration is a good starting point for when you're using Material for 
-MkDocs for the first time. The best idea is to explore the [reference], and 
+This configuration is a good starting point for when you're using Material for
+MkDocs for the first time. The best idea is to explore the [reference], and
 gradually add what you want to use:
 
 ``` yaml
 markdown_extensions:
 
   # Python Markdown
-  - meta
   - toc:
       permalink: true
 
@@ -97,7 +93,7 @@ markdown_extensions:
   - pymdownx.superfences
 ```
 
-  [reference]: ../../reference/abbreviations.md
+  [reference]: ../../reference/index.md
 
 ### Recommended configuration
 
@@ -113,7 +109,6 @@ markdown_extensions:
   - attr_list
   - def_list
   - footnotes
-  - meta
   - md_in_html
   - toc:
       permalink: true
@@ -126,8 +121,8 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.details
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.keys

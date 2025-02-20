@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+ * Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -67,11 +67,12 @@ function highlight(icon: Icon, query: string): string {
  *
  * @param icon - Icon
  * @param query - Search query
+ * @param file - Render as file
  *
  * @returns Element
  */
 export function renderIconSearchResult(
-  icon: Icon, query: string
+  icon: Icon, query: string, file?: boolean
 ): HTMLElement {
   return (
     <li class="mdx-iconsearch-result__item">
@@ -81,9 +82,13 @@ export function renderIconSearchResult(
       <button
         class="md-clipboard--inline"
         title={translation("clipboard.copy")}
-        data-clipboard-text={`:${icon.shortcode}:`}
+        data-clipboard-text={file ? icon.shortcode : `:${icon.shortcode}:`}
       >
-        <code>{`:${highlight(icon, query)}:`}</code>
+        <code>{
+          file
+            ? highlight(icon, query)
+            : `:${highlight(icon, query)}:`
+        }</code>
       </button>
     </li>
   )
