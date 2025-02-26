@@ -1,13 +1,9 @@
----
-template: overrides/main.html
----
-
 # How to upgrade
 
 Upgrade to the latest version with:
 
 ```
-pip install --upgrade mkdocs-material
+pip install --upgrade --force-reinstall mkdocs-material
 ```
 
 Show the currently installed version with:
@@ -15,6 +11,92 @@ Show the currently installed version with:
 ```
 pip show mkdocs-material
 ```
+
+## Upgrading from 8.x to 9.x
+
+This major release includes a brand new search implementation that is faster
+and allows for rich previews, advanced tokenization and better highlighting.
+It was available as part of Insiders for over a year, and now that the funding
+goal was hit, makes its way into the community edition.
+
+### Changes to `mkdocs.yml`
+
+#### `content.code.copy`
+
+The copy-to-clipboard buttons are now opt-in and can be enabled or disabled
+per block. If you wish to enable them for all code blocks, add the following
+lines to `mkdocs.yml`:
+
+``` yaml
+theme:
+  features:
+    - content.code.copy
+```
+
+#### `content.action.*`
+
+A "view source" button can be shown next to the "edit this page" button, both
+of which must now be explicitly enabled. Add the following lines to
+`mkdocs.yml`:
+
+``` yaml
+theme:
+  features:
+    - content.action.edit
+    - content.action.view
+```
+
+#### `navigation.footer`
+
+The _previous_ and _next_ buttons in the footer are now opt-in. If you wish to
+keep them for your documentation, add the following lines to `mkdocs.yml`:
+
+``` yaml
+theme:
+  features:
+    - navigation.footer
+```
+
+#### `theme.language`
+
+The Korean and Norwegian language codes were renamed, as they were non-standard:
+
+- `kr` to `ko`
+- `no` to `nb`
+
+#### `feedback.ratings`
+
+The old, nameless placeholders were removed (after being deprecated for several
+months). Make sure to switch to the new named placeholders `{title}` and `{url}`:
+
+```
+https://github.com/.../issues/new/?title=[Feedback]+{title}+-+{url}
+```
+
+### Changes to `*.html` files
+
+The templates have undergone a series of changes. If you have customized
+Material for MkDocs with theme extension, be sure to incorporate the latest
+changes into your templates. A good starting point is to [inspect the diff].
+
+!!! warning "Built-in plugins not working after upgrade?"
+
+    If one of the built-in plugins (search or tags) doesn't work anymore without
+    any apparent error or cause, it is very likely related to custom overrides.
+    [MkDocs 1.4.1] and above allow themes to namespace built-in plugins, which
+    Material for MkDocs 9 now does in order to allow authors to use third-party
+    plugins with the same name as built-in plugins. Search your overrides for
+    [`"in config.plugins"`][in config.plugins] and add the `material/` namespace.
+    Affected partials:
+
+    - [`content.html`][content.html]
+    - [`header.html`][header.html]
+
+  [inspect the diff]: https://github.com/squidfunk/mkdocs-material/pull/4628/files#diff-3ca112736b9164701b599f34780107abf14bb79fe110c478cac410be90899828
+  [MkDocs 1.4.1]: https://github.com/mkdocs/mkdocs/releases/tag/1.4.1
+  [in config.plugins]: https://github.com/squidfunk/mkdocs-material/search?q=%22in+config.plugins%22
+  [content.html]: https://github.com/squidfunk/mkdocs-material/blob/master/src/templates/partials/content.html
+  [header.html]: https://github.com/squidfunk/mkdocs-material/blob/master/src/templates/partials/header.html
 
 ## Upgrading from 7.x to 8.x
 
@@ -30,7 +112,7 @@ pip show mkdocs-material
 - Removed deprecated prebuilt search index support
 - Removed deprecated web app manifest – use customization
 - Removed `extracopyright` variable – use new `copyright` partial
-- Removed Disqus integation – use customization
+- Removed Disqus integration – use customization
 - Switched to `:is()` selectors for simple selector lists
 - Switched autoprefixer from `last 4 years` to `last 2 years`
 - Improved CSS overall to match modern standards
@@ -45,7 +127,7 @@ pip show mkdocs-material
 #### `pymdownx.tabbed`
 
 Support for the legacy style of the [Tabbed] extension was dropped in favor
-of the new, alternate implementation which has [better behavior on mobile 
+of the new, alternate implementation which has [better behavior on mobile
 viewports]:
 
 === "8.x"
@@ -53,7 +135,7 @@ viewports]:
     ``` yaml
     markdown_extensions:
       - pymdownx.tabbed:
-          alternate_style: true 
+          alternate_style: true
     ```
 
 === "7.x"
@@ -64,7 +146,7 @@ viewports]:
     ```
 
   [Tabbed]: setup/extensions/python-markdown-extensions.md#tabbed
-  [better behavior on mobile viewports]: https://twitter.com/squidfunk/status/1424740370596958214
+  [better behavior on mobile viewports]: https://x.com/squidfunk/status/1424740370596958214
 
 #### `pymdownx.superfences`
 
@@ -133,7 +215,7 @@ matches the new structure:
 - If you've overridden a __template__, check the respective `*.html` file for
   potential changes
 
-=== ":octicons-file-code-16: base.html"
+=== ":octicons-file-code-16: `base.html`"
 
     ``` diff
     @@ -13,11 +13,6 @@
@@ -363,7 +445,7 @@ matches the new structure:
                </div>
     ```
 
-=== ":octicons-file-code-16: partials/copyright.html"
+=== ":octicons-file-code-16: `partials/copyright.html`"
 
     ``` diff
     @@ -0,0 +1,16 @@
@@ -385,7 +467,7 @@ matches the new structure:
     +</div>
     ```
 
-=== ":octicons-file-code-16: partials/footer.html"
+=== ":octicons-file-code-16: `partials/footer.html`"
 
     ``` diff
     @@ -41,21 +40,10 @@
@@ -416,7 +498,7 @@ matches the new structure:
      </footer>
     ```
 
-=== ":octicons-file-code-16: partials/social.html"
+=== ":octicons-file-code-16: `partials/social.html`"
 
     ``` diff
     @@ -4,17 +4,15 @@
@@ -492,7 +574,7 @@ matches the new structure:
 - If you've overridden a __template__, check the respective `*.html` file for
   potential changes
 
-=== ":octicons-file-code-16: base.html"
+=== ":octicons-file-code-16: `base.html`"
 
     ``` diff
     @@ -61,7 +61,7 @@
@@ -581,7 +663,7 @@ matches the new structure:
            {% endfor %}
     ```
 
-=== ":octicons-file-code-16: partials/footer.html"
+=== ":octicons-file-code-16: `partials/footer.html`"
 
     ``` diff
     -    <div class="md-footer-nav">
@@ -653,7 +735,7 @@ matches the new structure:
          <div class="md-footer-meta__inner md-grid">
     ```
 
-=== ":octicons-file-code-16: partials/header.html"
+=== ":octicons-file-code-16: `partials/header.html`"
 
     ``` diff
     @@ -6,21 +6,21 @@
@@ -725,7 +807,7 @@ matches the new structure:
          {% endif %}
     ```
 
-=== ":octicons-file-code-16: partials/source.html"
+=== ":octicons-file-code-16: `partials/source.html`"
 
     ``` diff
     @@ -4,5 +4,5 @@
@@ -737,7 +819,7 @@ matches the new structure:
          {% include ".icons/" ~ icon ~ ".svg" %}
     ```
 
-=== ":octicons-file-code-16: partials/toc.html"
+=== ":octicons-file-code-16: `partials/toc.html`"
 
     ``` diff
     @@ -12,7 +12,7 @@
@@ -808,7 +890,7 @@ matches the new structure:
 - If you've overridden a __template__, check the respective `*.html` file for
   potential changes
 
-=== ":octicons-file-code-16: base.html"
+=== ":octicons-file-code-16: `base.html`"
 
     ``` diff
     @@ -22,13 +22,6 @@
@@ -978,7 +1060,7 @@ matches the new structure:
            {%- endfor -%}
     ```
 
-=== ":octicons-file-code-16: partials/hero.html"
+=== ":octicons-file-code-16: `partials/hero.html`"
 
     ``` diff
     @@ -1,12 +0,0 @@
@@ -996,7 +1078,7 @@ matches the new structure:
     -</div>
     ```
 
-=== ":octicons-file-code-16: partials/source-link"
+=== ":octicons-file-code-16: `partials/source-link`"
 
     ``` diff
     @@ -1,14 +0,0 @@
@@ -1037,7 +1119,7 @@ matches the new structure:
 
   [CSS variables]: setup/changing-the-colors.md#custom-colors
   [icon integration]: reference/icons-emojis.md#search
-  [prebuilt search indexes]: setup/setting-up-site-search.md#built-in-search
+  [prebuilt search indexes]: plugins/search.md
 
 ### Changes to `mkdocs.yml`
 
@@ -1135,7 +1217,7 @@ was renamed to `separator`:
         tokenizer: '[\s\-\.]+'
     ```
 
-  [plugin options]: setup/setting-up-site-search.md#built-in-search
+  [plugin options]: plugins/search.md
 
 #### `extra.social.*`
 
@@ -1163,14 +1245,14 @@ in order to match the new way of specifying which icon to be used:
 ### Changes to `*.html` files { data-search-exclude }
 
 The templates have undergone a set of changes to make them future-proof. If
-you've used theme extension to override a block or template, make sure that it 
+you've used theme extension to override a block or template, make sure that it
 matches the new structure:
 
 - If you've overridden a __block__, check `base.html` for potential changes
 - If you've overridden a __template__, check the respective `*.html` file for
   potential changes
 
-=== ":octicons-file-code-16: base.html"
+=== ":octicons-file-code-16: `base.html`"
 
     ``` diff
     @@ -4,7 +4,6 @@
@@ -1419,7 +1501,7 @@ matches the new structure:
            {% endfor %}
     ```
 
-=== ":octicons-file-code-16: partials/footer.html"
+=== ":octicons-file-code-16: `partials/footer.html`"
 
     ``` diff
     @@ -5,34 +5,34 @@
@@ -1470,7 +1552,7 @@ matches the new structure:
              {% endif %}
     ```
 
-=== ":octicons-file-code-16: partials/header.html"
+=== ":octicons-file-code-16: `partials/header.html`"
 
     ``` diff
     @@ -4,51 +4,43 @@
@@ -1559,7 +1641,7 @@ matches the new structure:
      </header>
     ```
 
-=== ":octicons-file-code-16: partials/hero.html"
+=== ":octicons-file-code-16: `partials/hero.html`"
 
     ``` diff
     @@ -4,9 +4,8 @@
@@ -1572,7 +1654,7 @@ matches the new structure:
      <div class="{{ class }}" data-md-component="hero">
     ```
 
-=== ":octicons-file-code-16: partials/language.html"
+=== ":octicons-file-code-16: `partials/language.html`"
 
     ``` diff
     @@ -4,12 +4,4 @@
@@ -1590,7 +1672,7 @@ matches the new structure:
     +{% macro t(key) %}{{ lang.t(key) | default(fallback.t(key)) }}{% endmacro %}
     ```
 
-=== ":octicons-file-code-16: partials/logo.html"
+=== ":octicons-file-code-16: `partials/logo.html`"
 
     ``` diff
     @@ -0,0 +1,9 @@
@@ -1605,7 +1687,7 @@ matches the new structure:
     +{% endif %}
     ```
 
-=== ":octicons-file-code-16: partials/nav-item.html"
+=== ":octicons-file-code-16: `partials/nav-item.html`"
 
     ``` diff
     @@ -14,9 +14,15 @@
@@ -1637,7 +1719,7 @@ matches the new structure:
          <a href="{{ nav_item.url | url }}" title="{{ nav_item.title | striptags }}" class="md-nav__link md-nav__link--active">
     ```
 
-=== ":octicons-file-code-16: partials/nav.html"
+=== ":octicons-file-code-16: `partials/nav.html`"
 
     ``` diff
     @@ -4,14 +4,10 @@
@@ -1658,7 +1740,7 @@ matches the new structure:
        </label>
     ```
 
-=== ":octicons-file-code-16: partials/search.html"
+=== ":octicons-file-code-16: `partials/search.html`"
 
     ``` diff
     @@ -6,15 +6,18 @@
@@ -1686,7 +1768,7 @@ matches the new structure:
                </div>
     ```
 
-=== ":octicons-file-code-16: partials/social.html"
+=== ":octicons-file-code-16: `partials/social.html`"
 
     ``` diff
     @@ -4,9 +4,12 @@
@@ -1705,7 +1787,7 @@ matches the new structure:
      {% endif %}
     ```
 
-=== ":octicons-file-code-16: partials/source-date.html"
+=== ":octicons-file-code-16: `partials/source-date.html`"
 
     ``` diff
     @@ -0,0 +1,15 @@
@@ -1726,7 +1808,7 @@ matches the new structure:
     +</div>
     ```
 
-=== ":octicons-file-code-16: partials/source-link.html"
+=== ":octicons-file-code-16: `partials/source-link.html`"
 
     ``` diff
     @@ -0,0 +1,13 @@
@@ -1745,7 +1827,7 @@ matches the new structure:
     +</a>
     ```
 
-=== ":octicons-file-code-16: partials/source.html"
+=== ":octicons-file-code-16: `partials/source.html`"
 
     ``` diff
     @@ -4,24 +4,11 @@
@@ -1778,7 +1860,7 @@ matches the new structure:
        </div>
     ```
 
-=== ":octicons-file-code-16: partials/tabs-item.html"
+=== ":octicons-file-code-16: `partials/tabs-item.html`"
 
     ``` diff
     @@ -4,7 +4,7 @@
@@ -1789,7 +1871,7 @@ matches the new structure:
            <a href="{{ nav_item.url | url }}" class="md-tabs__link md-tabs__link--active">
     ```
 
-=== ":octicons-file-code-16: partials/tabs.html"
+=== ":octicons-file-code-16: `partials/tabs.html`"
 
     ``` diff
     @@ -5,7 +5,7 @@
@@ -1803,7 +1885,7 @@ matches the new structure:
            {% for nav_item in nav %}
     ```
 
-=== ":octicons-file-code-16: partials/toc-item.html"
+=== ":octicons-file-code-16: `partials/toc-item.html`"
 
     ``` diff
     @@ -6,7 +6,7 @@
@@ -1817,7 +1899,7 @@ matches the new structure:
                {% include "partials/toc-item.html" %}
     ```
 
-=== ":octicons-file-code-16: partials/toc.html"
+=== ":octicons-file-code-16: `partials/toc.html`"
 
     ``` diff
     @@ -4,35 +4,22 @@
@@ -1865,7 +1947,7 @@ matches the new structure:
 
 Material for MkDocs 4 fixes incorrect layout on Chinese systems. The fix
 includes a mandatory change of the base font-size from `10px` to `20px` which
-means all `rem` values needed to be updated. Within the theme, `px` to `rem` 
+means all `rem` values needed to be updated. Within the theme, `px` to `rem`
 calculation is now encapsulated in a new function called `px2rem` which is part
 of the SASS code base.
 
