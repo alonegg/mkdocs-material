@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+ * Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -29,6 +29,7 @@ import {
   fromEvent,
   map,
   merge,
+  startWith,
   withLatestFrom
 } from "rxjs"
 
@@ -71,7 +72,8 @@ export function mountIconSearchQuery(
   )
     .pipe(
       map(() => el.value),
-      distinctUntilChanged()
+      startWith(el.value),
+      distinctUntilChanged(),
     )
 
   /* Log search on blur */
@@ -82,7 +84,7 @@ export function mountIconSearchQuery(
     )
       .subscribe(([, value]) => {
         const path = document.location.pathname
-        if (value.length)
+        if (typeof ga === "function" && value.length)
           ga("send", "pageview", `${path}?q=[icon]+${value}`)
       })
 

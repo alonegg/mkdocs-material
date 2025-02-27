@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+ * Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -24,32 +24,21 @@ import { Observable, Subject } from "rxjs"
 
 import { Keyboard, Viewport } from "~/browser"
 import { Component } from "~/components"
-import {
-  SearchIndex,
-  SearchTransformFn
-} from "~/integrations"
 
 /* ----------------------------------------------------------------------------
  * Global types
  * ------------------------------------------------------------------------- */
 
-/**
- * Global search configuration
- */
-export interface GlobalSearchConfig {
-  transform?: SearchTransformFn        /* Transformation function */
-  index?: Promise<SearchIndex>         /* Alternate index */
-  worker?: string                      /* Alternate worker URL */
-}
-
-/* ------------------------------------------------------------------------- */
-
 declare global {
 
   /**
-   * Global search configuration
+   * Compute hash from the given string
+   *
+   * @param value - String value
+   *
+   * @returns Hash
    */
-  const __search: GlobalSearchConfig | undefined
+  function __md_hash(value: string): number
 
   /**
    * Fetch the value for a key from the given storage
@@ -110,5 +99,6 @@ declare global {
   var screen$: Observable<boolean>     /* Media screen observable */
   var print$: Observable<boolean>      /* Media print observable */
   var alert$: Subject<string>          /* Alert subject */
+  var progress$: Subject<number>       /* Progress indicator subject */
   var component$: Observable<Component>/* Component observable */
 }

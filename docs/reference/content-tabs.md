@@ -1,5 +1,5 @@
 ---
-template: overrides/main.html
+icon: material/tab
 ---
 
 # Content tabs
@@ -12,14 +12,14 @@ grouping code blocks and other content.
 ## Configuration
 
 This configuration enables content tabs, and allows to nest arbitrary content
-inside content tabs, including code blocks and ... more content tabs! Add the 
+inside content tabs, including code blocks and ... more content tabs! Add the
 following lines to `mkdocs.yml`:
 
 ``` yaml
 markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
 ```
 
 See additional configuration options:
@@ -30,15 +30,53 @@ See additional configuration options:
   [SuperFences]: ../setup/extensions/python-markdown-extensions.md#superfences
   [Tabbed]: ../setup/extensions/python-markdown-extensions.md#tabbed
 
+### Anchor links
+
+<!-- md:version 9.5.0 -->
+<!-- md:flag experimental -->
+
+In order to link to content tabs and share them more easily, an anchor link is
+automatically added to each content tab, which you can copy via right click or
+open in a new tab:
+
+=== "Open me in a new tab ..."
+
+=== "... or me ..."
+
+=== "... or even me"
+
+You can copy the link of the tab and create a link on the same or any other
+page. For example, you can [jump to the third tab above this paragraph][tab_1]
+or to the [publishing guide for Insiders][tab_2].
+
+!!! tip "Readable anchor links"
+
+    [Python Markdown Extensions] 9.6 adds support for [slugification] of
+    content tabs, which produces nicer looking and more readable anchor links.
+    Enable the slugify function with the following lines:
+
+    ``` yaml
+    markdown_extensions:
+      - pymdownx.tabbed:
+          slugify: !!python/object/apply:pymdownx.slugs.slugify
+            kwds:
+              case: lower
+    ```
+
+    Fore more information, please [see the extension guide][slugification].
+
+  [tab_1]: #anchor-links--or-even-me
+  [tab_2]: ../publishing-your-site.md#with-github-actions-insiders
+  [Python Markdown Extensions]: https://facelessuser.github.io/pymdown-extensions/
+  [slugification]: ../setup/extensions/python-markdown-extensions.md#+pymdownx.tabbed.slugify
+
 ### Linked content tabs
 
-[:octicons-heart-fill-24:{ .mdx-heart } Insiders][Insiders]{ .mdx-insiders } ·
-[:octicons-tag-24: insiders-2.9.0][Insiders] ·
-:octicons-unlock-24: Feature flag ·
-:octicons-beaker-24: Experimental
+<!-- md:version 8.3.0 -->
+<!-- md:feature -->
 
 When enabled, all content tabs across the whole documentation site will be
-linked and switch to the same label when the user clicks on a tab. Add the 
+linked and switch to the same label when the user clicks on a tab. Add the
 following lines to `mkdocs.yml`:
 
 ``` yaml
@@ -52,18 +90,17 @@ tabs with the same label will be activated when a user clicks a content tab
 regardless of order inside a container. Furthermore, this feature is fully
 integrated with [instant loading] and persisted across page loads.
 
-=== ":octicons-check-circle-fill-16: Enabled"
+=== "Feature enabled"
 
-    [![content.tabs.link enabled]][content.tabs.link enabled]
+    [![Linked content tabs enabled]][Linked content tabs enabled]
 
-=== ":octicons-skip-16: Disabled"
+=== "Feature disabled"
 
-    [![content.tabs.link disabled]][content.tabs.link disabled]
+    [![Linked content tabs disabled]][Linked content tabs disabled]
 
-  [Insiders]: ../insiders/index.md
   [instant loading]: ../setup/setting-up-navigation.md#instant-loading
-  [content.tabs.link enabled]: ../assets/screenshots/content-tabs-link.png
-  [content.tabs.link disabled]: ../assets/screenshots/content-tabs.png
+  [Linked content tabs enabled]: ../assets/screenshots/content-tabs-link.png
+  [Linked content tabs disabled]: ../assets/screenshots/content-tabs.png
 
 ## Usage
 
@@ -71,11 +108,9 @@ integrated with [instant loading] and persisted across page loads.
 
 Code blocks are one of the primary targets to be grouped, and can be considered
 a special case of content tabs, as tabs with a single code block are always
-rendered without horizontal spacing.
+rendered without horizontal spacing:
 
-_Example_:
-
-```
+``` title="Content tabs with code blocks"
 === "C"
 
     ``` c
@@ -99,7 +134,7 @@ _Example_:
     ```
 ```
 
-_Result_:
+<div class="result" markdown>
 
 === "C"
 
@@ -122,16 +157,16 @@ _Result_:
       return 0;
     }
     ```
+
+</div>
 
 ### Grouping other content
 
 When a content tab contains more than one code block, it is rendered with
 horizontal spacing. Vertical spacing is never added, but can be achieved
-by nesting tabs in other blocks.
+by nesting tabs in other blocks:
 
-_Example_:
-
-```
+``` title="Content tabs"
 === "Unordered list"
 
     * Sed sagittis eleifend rutrum
@@ -145,7 +180,7 @@ _Example_:
     3. Nulla tempor lobortis orci
 ```
 
-_Result_:
+<div class="result" markdown>
 
 === "Unordered list"
 
@@ -158,6 +193,8 @@ _Result_:
     1. Sed sagittis eleifend rutrum
     2. Donec vitae suscipit est
     3. Nulla tempor lobortis orci
+
+</div>
 
 ### Embedded content
 
@@ -165,78 +202,46 @@ When [SuperFences] is enabled, content tabs can contain arbitrary nested
 content, including further content tabs, and can be nested in other blocks like
 [admonitions] or blockquotes:
 
-_Example_:
-
-``` markdown
+``` title="Content tabs in admonition"
 !!! example
 
     === "Unordered List"
 
-        _Example_:
-
         ``` markdown
         * Sed sagittis eleifend rutrum
         * Donec vitae suscipit est
         * Nulla tempor lobortis orci
         ```
-
-        _Result_:
-
-        * Sed sagittis eleifend rutrum
-        * Donec vitae suscipit est
-        * Nulla tempor lobortis orci
 
     === "Ordered List"
 
-        _Example_:
-
         ``` markdown
         1. Sed sagittis eleifend rutrum
         2. Donec vitae suscipit est
         3. Nulla tempor lobortis orci
         ```
-
-        _Result_:
-
-        1. Sed sagittis eleifend rutrum
-        2. Donec vitae suscipit est
-        3. Nulla tempor lobortis orci
 ```
 
-_Result_:
+<div class="result" markdown>
 
 !!! example
 
     === "Unordered List"
 
-        _Example_:
-
         ``` markdown
         * Sed sagittis eleifend rutrum
         * Donec vitae suscipit est
         * Nulla tempor lobortis orci
         ```
-
-        _Result_:
-
-        * Sed sagittis eleifend rutrum
-        * Donec vitae suscipit est
-        * Nulla tempor lobortis orci
 
     === "Ordered List"
 
-        _Example_:
-
         ``` markdown
         1. Sed sagittis eleifend rutrum
         2. Donec vitae suscipit est
         3. Nulla tempor lobortis orci
         ```
 
-        _Result_:
-
-        1. Sed sagittis eleifend rutrum
-        2. Donec vitae suscipit est
-        3. Nulla tempor lobortis orci
+</div>
 
   [admonitions]: admonitions.md

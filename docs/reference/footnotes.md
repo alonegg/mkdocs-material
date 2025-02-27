@@ -1,5 +1,5 @@
 ---
-template: overrides/main.html
+icon: material/format-align-bottom
 ---
 
 # Footnotes
@@ -26,6 +26,28 @@ See additional configuration options:
 
   [Footnotes]: ../setup/extensions/python-markdown.md#footnotes
 
+### Footnote tooltips
+
+<!-- md:sponsors -->
+<!-- md:version insiders-4.51.0 -->
+<!-- md:flag experimental -->
+
+[Insiders] allows to render footnotes as inline tooltips, so the user can read
+the footnote without leaving the context of the document. Footnote tooltips can
+be enabled in `mkdocs.yml` with:
+
+``` yaml
+theme:
+  features:
+    - content.footnote.tooltips
+```
+
+__Footnote tooltips are enabled on our documentation__, so to try it out, you
+can just hover or focus any footnote on this page or any other page of our
+documentation.
+
+  [Insiders]: ../insiders/index.md
+
 ## Usage
 
 ### Adding footnote references
@@ -34,15 +56,15 @@ A footnote reference must be enclosed in square brackets and must start with a
 caret `^`, directly followed by an arbitrary identifier, which is similar to
 the standard Markdown link syntax.
 
-_Example_:
-
-``` markdown
+``` title="Text with footnote references"
 Lorem ipsum[^1] dolor sit amet, consectetur adipiscing elit.[^2]
 ```
 
-_Result_:
+<div class="result" markdown>
 
 Lorem ipsum[^1] dolor sit amet, consectetur adipiscing elit.[^2]
+
+</div>
 
 ### Adding footnote content
 
@@ -53,38 +75,38 @@ reference is automatically added.
 
 #### on a single line
 
-Short footnotes can be written on the same line.
+Short footnotes can be written on the same line:
 
-_Example_:
-
-``` markdown
+``` title="Footnote"
 [^1]: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 ```
 
-_Result_:
+<div class="result" markdown>
 
 [:octicons-arrow-down-24: Jump to footnote](#fn:1)
+
+</div>
 
   [^1]: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 #### on multiple lines
 
-Paragraphs can be written on the next line and must be indented by four spaces.
+Paragraphs can be written on the next line and must be indented by four spaces:
 
-_Example_:
-
-``` markdown
+``` title="Footnote"
 [^2]:
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et euismod
     nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
     massa, nec semper lorem quam in massa.
 ```
 
-_Result_:
+<div class="result" markdown>
+
+[:octicons-arrow-down-24: Jump to footnote](#fn:2)
+
+</div>
 
 [^2]:
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et euismod
     nulla. Curabitur feugiat, tortor non consequat finibus, justo purus
     auctor massa, nec semper lorem quam in massa.
-
-[:octicons-arrow-down-24: Jump to footnote](#fn:2)

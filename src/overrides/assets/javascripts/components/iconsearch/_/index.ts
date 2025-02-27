@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+ * Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -20,12 +20,16 @@
  * IN THE SOFTWARE.
  */
 
-import { Observable, merge } from "rxjs"
+import { BehaviorSubject, Observable, fromEvent, map, merge } from "rxjs"
 
 import { configuration } from "~/_"
 import { requestJSON } from "~/browser"
 
-import { Component, getComponentElement } from "../../_"
+import {
+  Component,
+  getComponentElement,
+  getComponentElements
+} from "../../_"
 import {
   IconSearchQuery,
   mountIconSearchQuery
@@ -64,6 +68,14 @@ export type IconSearch =
   | IconSearchQuery
   | IconSearchResult
 
+/**
+ * Icon search mode
+ */
+export type IconSearchMode =
+  | "all"
+  | "icons"
+  | "emojis"
+
 /* ----------------------------------------------------------------------------
  * Functions
  * ------------------------------------------------------------------------- */
@@ -80,15 +92,25 @@ export function mountIconSearch(
 ): Observable<Component<IconSearch>> {
   const config = configuration()
   const index$ = requestJSON<IconSearchIndex>(
-    new URL("overrides/assets/javascripts/iconsearch_index.json", config.base)
+    new URL("assets/javascripts/iconsearch_index.json", config.base)
   )
 
   /* Retrieve query and result components */
   const query  = getComponentElement("iconsearch-query", el)
   const result = getComponentElement("iconsearch-result", el)
 
+  /* Retrieve select component */
+  const mode$ = new BehaviorSubject<IconSearchMode>("all")
+  const selects = getComponentElements("iconsearch-select", el)
+  for (const select of selects) {
+    fromEvent(select, "change").pipe(
+      map(ev => (ev.target as HTMLSelectElement).value as IconSearchMode)
+    )
+      .subscribe(mode$)
+  }
+
   /* Create and return component */
   const query$  = mountIconSearchQuery(query)
-  const result$ = mountIconSearchResult(result, { index$, query$ })
+  const result$ = mountIconSearchResult(result, { index$, query$, mode$ })
   return merge(query$, result$)
 }

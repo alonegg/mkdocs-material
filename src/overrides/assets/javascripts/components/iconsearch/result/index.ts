@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+ * Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -26,6 +26,7 @@ import {
   Subject,
   bufferCount,
   combineLatest,
+  combineLatestWith,
   distinctUntilKeyChanged,
   filter,
   finalize,
@@ -38,7 +39,6 @@ import {
   zipWith
 } from "rxjs"
 
-import { translation } from "~/_"
 import {
   getElement,
   watchElementBoundary
@@ -48,7 +48,7 @@ import { round } from "~/utilities"
 import { Icon, renderIconSearchResult } from "_/templates"
 
 import { Component } from "../../_"
-import { IconSearchIndex } from "../_"
+import { IconSearchIndex, IconSearchMode } from "../_"
 import { IconSearchQuery } from "../query"
 
 /* ----------------------------------------------------------------------------
@@ -72,6 +72,7 @@ export interface IconSearchResult {
 interface WatchOptions {
   index$: Observable<IconSearchIndex>  /* Search index observable */
   query$: Observable<IconSearchQuery>  /* Search query observable */
+  mode$: Observable<IconSearchMode>    /* Search mode observable */
 }
 
 /**
@@ -80,6 +81,7 @@ interface WatchOptions {
 interface MountOptions {
   index$: Observable<IconSearchIndex>  /* Search index observable */
   query$: Observable<IconSearchQuery>  /* Search query observable */
+  mode$: Observable<IconSearchMode>    /* Search mode observable */
 }
 
 /* ----------------------------------------------------------------------------
@@ -89,44 +91,81 @@ interface MountOptions {
 /**
  * Watch icon search result
  *
- * @param _el - Icon search result element
+ * @param el - Icon search result element
  * @param options - Options
  *
  * @returns Icon search result observable
  */
 export function watchIconSearchResult(
-  _el: HTMLElement, { index$, query$ }: WatchOptions
+  el: HTMLElement, { index$, query$, mode$ }: WatchOptions
 ): Observable<IconSearchResult> {
-  return combineLatest([
-    query$.pipe(distinctUntilKeyChanged("value")),
-    index$
-      .pipe(
-        map(({ icons, emojis }) => [
-          ...Object.keys(icons.data),
-          ...Object.keys(emojis.data)
-        ])
-      )
-  ])
-    .pipe(
-      map(([{ value }, data]) => search(data, value)),
-      switchMap(shortcodes => index$.pipe(
-        map(({ icons, emojis }) => ({
-          data: shortcodes.map<Icon>(shortcode => {
-            const category =
-              shortcode in icons.data
-                ? icons
-                : emojis
-            return {
-              shortcode,
-              url: [
-                category.base,
-                category.data[shortcode]
-              ].join("")
-            }
-          })
-        }))
-      ))
-    )
+  switch (el.getAttribute("data-mdx-mode")) {
+
+    case "file":
+      return combineLatest([
+        query$.pipe(distinctUntilKeyChanged("value")),
+        index$
+          .pipe(
+            map(({ icons }) => Object.values(icons.data)
+              .map(icon => icon.replace(/\.svg$/, ""))
+            )
+          )
+      ])
+        .pipe(
+          map(([{ value }, data]) => search(data, value)),
+          switchMap(files => index$.pipe(
+            map(({ icons }) => ({
+              data: files.map<Icon>(shortcode => {
+                return {
+                  shortcode,
+                  url: [
+                    icons.base,
+                    shortcode,
+                    ".svg"
+                  ].join("")
+                }
+              })
+            }))
+          ))
+        )
+
+    default:
+      return combineLatest([
+        query$.pipe(distinctUntilKeyChanged("value")),
+        index$
+          .pipe(
+            combineLatestWith(mode$),
+            map(([{ icons, emojis }, mode]) => [
+              ...["all", "icons"].includes(mode)
+                ? Object.keys(icons.data)
+                : [],
+              ...["all", "emojis"].includes(mode)
+                ? Object.keys(emojis.data)
+                : []
+            ])
+          )
+      ])
+        .pipe(
+          map(([{ value }, data]) => search(data, value)),
+          switchMap(shortcodes => index$.pipe(
+            map(({ icons, emojis }) => ({
+              data: shortcodes.map<Icon>(shortcode => {
+                const category =
+                  shortcode in icons.data
+                    ? icons
+                    : emojis
+                return {
+                  shortcode,
+                  url: [
+                    category.base,
+                    category.data[shortcode]
+                  ].join("")
+                }
+              })
+            }))
+          ))
+        )
+  }
 }
 
 /**
@@ -138,7 +177,7 @@ export function watchIconSearchResult(
  * @returns Icon search result component observable
  */
 export function mountIconSearchResult(
-  el: HTMLElement, { index$, query$ }: MountOptions
+  el: HTMLElement, { index$, query$, mode$ }: MountOptions
 ): Observable<Component<IconSearchResult, HTMLElement>> {
   const push$ = new Subject<IconSearchResult>()
   const boundary$ = watchElementBoundary(el)
@@ -147,7 +186,7 @@ export function mountIconSearchResult(
     )
 
   /* Update search result metadata */
-  const meta = getElement(":scope > :first-child", el)
+  const meta = getElement(".mdx-iconsearch-result__meta", el)
   push$
     .pipe(
       withLatestFrom(query$)
@@ -158,27 +197,25 @@ export function mountIconSearchResult(
 
             /* No results */
             case 0:
-              meta.textContent = translation("search.result.none")
+              meta.textContent = "No matches"
               break
 
             /* One result */
             case 1:
-              meta.textContent = translation("search.result.one")
+              meta.textContent = "1 match"
               break
 
             /* Multiple result */
             default:
-              meta.textContent = translation(
-                "search.result.other",
-                round(data.length)
-              )
+              meta.textContent = `${round(data.length)} matches`
           }
         } else {
-          meta.textContent = translation("search.result.placeholder")
+          meta.textContent = "Type to start searching"
         }
       })
 
   /* Update icon search result list */
+  const file = el.getAttribute("data-mdx-mode") === "file"
   const list = getElement(":scope > :last-child", el)
   push$
     .pipe(
@@ -189,17 +226,17 @@ export function mountIconSearchResult(
           .pipe(
             bufferCount(10),
             zipWith(boundary$),
-            switchMap(([chunk]) => of(...chunk))
+            switchMap(([chunk]) => chunk)
           )
       )),
       withLatestFrom(query$)
     )
       .subscribe(([result, { value }]) => list.appendChild(
-        renderIconSearchResult(result, value)
+        renderIconSearchResult(result, value, file)
       ))
 
   /* Create and return component */
-  return watchIconSearchResult(el, { query$, index$ })
+  return watchIconSearchResult(el, { query$, index$, mode$ })
     .pipe(
       tap(state => push$.next(state)),
       finalize(() => push$.complete()),

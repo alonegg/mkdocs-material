@@ -1,15 +1,16 @@
 ---
-template: overrides/main.html
+icon: material/emoticon-happy-outline
 ---
 
-# Icons + Emojis
+# Icons, Emojis
 
 One of the best features of Material for MkDocs is the possibility to use [more
-than 8.000 icons][icon search] and thousands of emojis in your project 
-documentation with practically zero additional effort. Moreover, custom icons 
-can be added and used in `mkdocs.yml`, documents and templates.
+than 10,000 icons][icon search] and thousands of emojis in your project
+documentation with practically zero additional effort. Moreover, [custom icons
+can be added] and used in `mkdocs.yml`, documents and templates.
 
   [icon search]: #search
+  [custom icons can be added]: ../setup/changing-the-logo-and-icons.md#additional-icons
 
 ## Search
 
@@ -20,6 +21,14 @@ can be added and used in `mkdocs.yml`, documents and templates.
     data-mdx-component="iconsearch-query"
   />
   <div class="mdx-iconsearch-result" data-mdx-component="iconsearch-result">
+    <select
+      class="mdx-iconsearch-result__select"
+      data-mdx-component="iconsearch-select"
+    >
+      <option value="all" selected>All</option>
+      <option value="icons">Icons</option>
+      <option value="emojis">Emojis</option>
+    </select>
     <div class="mdx-iconsearch-result__meta"></div>
     <ol class="mdx-iconsearch-result__list"></ol>
   </div>
@@ -38,9 +47,10 @@ lines to `mkdocs.yml`:
 
 ``` yaml
 markdown_extensions:
+  - attr_list
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 ```
 
 The following icon sets are bundled with Material for MkDocs:
@@ -48,17 +58,21 @@ The following icon sets are bundled with Material for MkDocs:
 - :material-material-design: – [Material Design]
 - :fontawesome-brands-font-awesome: – [FontAwesome]
 - :octicons-mark-github-16: – [Octicons]
+- :simple-simpleicons: – [Simple Icons]
 
 See additional configuration options:
 
+- [Attribute Lists]
 - [Emoji]
 - [Emoji with custom icons]
 
-  [Material Design]: https://materialdesignicons.com/
-  [FontAwesome]: https://fontawesome.com/icons?d=gallery&m=free
+  [Material Design]: https://pictogrammers.com/library/mdi/
+  [FontAwesome]: https://fontawesome.com/search?m=free
   [Octicons]: https://octicons.github.com/
+  [Simple Icons]: https://simpleicons.org/
+  [Attribute Lists]: ../setup/extensions/python-markdown.md#attribute-lists
   [Emoji]: ../setup/extensions/python-markdown-extensions.md#emoji
-  [Emoji with custom icons]: ../setup/extensions/python-markdown-extensions.md#custom-icons
+  [Emoji with custom icons]: ../setup/extensions/python-markdown-extensions.md#+pymdownx.emoji.options.custom_icons
 
 ## Usage
 
@@ -66,19 +80,18 @@ See additional configuration options:
 
 Emojis can be integrated in Markdown by putting the shortcode of the emoji
 between two colons. If you're using [Twemoji] (recommended), you can look up
-the shortcodes at [Emojipedia].
+the shortcodes at [Emojipedia]:
 
-_Example_:
-
-```
-:smile: 
+``` title="Emoji"
+:smile:
 ```
 
-_Result_:
+<div class="result" markdown>
 
 :smile:
 
-  [Twemoji]: https://twemoji.twitter.com/
+</div>
+  [Twemoji]: https://github.com/twitter/twemoji
   [Emojipedia]: https://emojipedia.org/twitter/
 
 ### Using icons
@@ -87,80 +100,57 @@ When [Emoji] is enabled, icons can be used similar to emojis, by referencing
 a valid path to any icon bundled with the theme, which are located in the
 [`.icons`][custom icons] directory, and replacing `/` with `-`:
 
-_Example_:
-
-```
-- :material-account-circle: – `material/account-circle.svg`
-- :fontawesome-regular-laugh-wink: – `fontawesome/regular/laugh-wink.svg`
-- :octicons-repo-push-16: – `octicons/repo-push-16.svg`
+``` title="Icon"
+:fontawesome-regular-face-laugh-wink:
 ```
 
-_Result_:
+<div class="result" markdown>
 
-- :material-account-circle: – [`material/account-circle.svg`][icon Material]
-- :fontawesome-regular-laugh-wink: – [`fontawesome/regular/laugh-wink.svg`][icon FontAwesome]
-- :octicons-repo-push-16: – [`octicons/repo-push-16.svg`][icon Octicons]
+:fontawesome-regular-face-laugh-wink:
 
-  [custom icons]: https://github.com/squidfunk/mkdocs-material/tree/master/material/.icons
-  [icon Material]: https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/material/.icons/material/account-circle.svg
-  [icon FontAwesome]: https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/material/.icons/fontawesome/regular/laugh-wink.svg
-  [icon Octicons]: https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/material/.icons/octicons/repo-push-16.svg
+</div>
+
+  [custom icons]: https://github.com/squidfunk/mkdocs-material/tree/master/material/templates/.icons
 
 #### with colors
 
 When [Attribute Lists] is enabled, custom CSS classes can be added to icons by
-suffixing the icon with a special syntax. While HTML allows to use
-[inline styles], it's always recommended to add an [additional style sheet] and
-move declarations into dedicated CSS classes.
+suffixing the icon with a special syntax. While HTML allows to use [inline
+styles], it's always recommended to add an [additional style sheet] and move
+declarations into dedicated CSS classes:
 
 <style>
-  .medium {
-    color: #00AB6C;
-  }
-  .twitter {
-    color: #1DA1F2;
-  }
-  .facebook {
-    color: #4267B2;
+  .youtube {
+    color: #EE0F0F;
   }
 </style>
 
-_Example_:
-
-=== ":octicons-file-code-16: docs/example.md"
-
-    ``` markdown
-    - :fontawesome-brands-medium:{ .medium } – Medium
-    - :fontawesome-brands-twitter:{ .twitter } – Twitter
-    - :fontawesome-brands-facebook:{ .facebook } – Facebook
-    ```
-
-=== ":octicons-file-code-16: docs/stylesheets/extra.css"
+=== ":octicons-file-code-16: `docs/stylesheets/extra.css`"
 
     ``` css
-    .medium {
-      color: #00AB6C;
-    }
-    .twitter {
-      color: #1DA1F2;
-    }
-    .facebook {
-      color: #4267B2;
+    .youtube {
+      color: #EE0F0F;
     }
     ```
 
-=== ":octicons-file-code-16: mkdocs.yml"
+=== ":octicons-file-code-16: `mkdocs.yml`"
 
     ``` yaml
     extra_css:
       - stylesheets/extra.css
     ```
 
-_Result_:
+After applying the customization, add the CSS class to the icon shortcode:
 
-- :fontawesome-brands-medium:{ .medium } – Medium
-- :fontawesome-brands-twitter:{ .twitter } – Twitter
-- :fontawesome-brands-facebook:{ .facebook } – Facebook
+``` markdown title="Icon with color"
+:fontawesome-brands-youtube:{ .youtube }
+```
+
+<div class="result" markdown>
+
+:fontawesome-brands-youtube:{ .youtube }
+
+</div>
 
   [Attribute Lists]: ../setup/extensions/python-markdown.md#attribute-lists
   [inline styles]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/style
@@ -170,17 +160,9 @@ _Result_:
 
 Similar to adding [colors], it's just as easy to add [animations] to icons by
 using an [additional style sheet], defining a `@keyframes` rule and adding a
-dedicated CSS class to the icon.
+dedicated CSS class to the icon:
 
-_Example_:
-
-=== ":octicons-file-code-16: docs/example.md"
-
-    ``` markdown
-    :octicons-heart-fill-24:{ .heart }
-    ```
-
-=== ":octicons-file-code-16: docs/stylesheets/extra.css"
+=== ":octicons-file-code-16: `docs/stylesheets/extra.css`"
 
     ``` css
     @keyframes heart {
@@ -196,19 +178,35 @@ _Example_:
     }
     ```
 
-=== ":octicons-file-code-16: mkdocs.yml"
+=== ":octicons-file-code-16: `mkdocs.yml`"
 
     ``` yaml
     extra_css:
       - stylesheets/extra.css
     ```
 
-_Result_:
+After applying the customization, add the CSS class to the icon shortcode:
+
+``` markdown title="Icon with animation"
+:octicons-heart-fill-24:{ .heart }
+```
+
+<div class="result" markdown>
 
 :octicons-heart-fill-24:{ .mdx-heart }
 
+</div>
+
   [colors]: #with-colors
   [animations]: https://developer.mozilla.org/en-US/docs/Web/CSS/animation
+
+### Icons, emojis in sidebars :smile:
+
+With the help of the [built-in typeset plugin], you can use icons and emojis
+in headings, which will then be rendered in the sidebars. The plugin preserves
+Markdown and HTML formatting.
+
+  [built-in typeset plugin]: ../plugins/typeset.md
 
 ## Customization
 
@@ -220,9 +218,20 @@ reference any icon that's [bundled with the theme][icon search] with Jinja's
 
 ``` html
 <span class="twemoji">
-  {% include ".icons/fontawesome/brands/twitter.svg" %}
+  {% include ".icons/fontawesome/brands/youtube.svg" %} <!-- (1)! -->
 </span>
 ```
+
+1.  Enter a few keywords to find the perfect icon using our [icon search] and
+    click on the shortcode to copy it to your clipboard:
+
+    <div class="mdx-iconsearch" data-mdx-component="iconsearch">
+      <input class="md-input md-input--stretch mdx-iconsearch__input" placeholder="Search icon" data-mdx-component="iconsearch-query" value="brands youtube" />
+      <div class="mdx-iconsearch-result" data-mdx-component="iconsearch-result" data-mdx-mode="file">
+        <div class="mdx-iconsearch-result__meta"></div>
+        <ol class="mdx-iconsearch-result__list"></ol>
+      </div>
+    </div>
 
 This is exactly what Material for MkDocs does in its templates.
 
